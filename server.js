@@ -4,12 +4,13 @@ const PORT = process.env.PORT || 3001; // Either the default PORT or port 3001.
 
 const path = require("path");
 
-// 'Get /notes' should return the notes.html file.
-app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, "public/notes.html"));
+app.get('/notes', (req, res) => { // Get request for '/notes'.
+    res.sendFile(path.join(__dirname, "public/notes.html")); // Returns 'notes.html'.
 });
 
-// 'Get *' should return the index.html file.
+app.get('*', (req, res) => { // Takes in any request other than '/notes'.
+    res.sendFile(path.join(__dirname, "public/index.html")); // Returns 'index.html'.
+});
 
 // 'Get /api/notes' should read the db.json file, return all saved notes - as JSON.
 
