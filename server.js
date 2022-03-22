@@ -24,15 +24,21 @@ app.get("*", (req, res) => { // Takes in any request other than '/notes'.
 });
 
 app.post("/api/notes", (req, res) => {
-    const db = require("./db/db.json");
+    const db = require("./db/db.json"); // Want to change this to read file.
     const newNote = req.body;
     newNote.id = uuidv4();
-    db.push(newNote);
-    fs.writeFileSync("./db/db.json", JSON.stringify(db));
+    const updatedDB = db.push(newNote);
+    fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
 
-    res.sendFile(path.join(__dirname, "./db/db.json"));
+    res.send(`POST request for note with id ${newNote.id} recieved.`);
 });
 
-// Delete /api/notes/:id' - final step if time.
+app.delete("/api/notes/:id", (req, res) => {
+    const deleteID = req.params.id;
+    const db = require("./db/db.json"); // Want to change this to 'read file'
+    const updatedDB = db.filter((note) => note.id !== deleteID);
+    fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
+    res.send(`DELETE Request Called for ${deleteID}`);
+  })
 
 app.listen(PORT, () => console.log(`App now listening on PORT ${PORT}`));
