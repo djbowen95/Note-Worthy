@@ -3,7 +3,7 @@ const app = express(); // Initiates express / stores it under a variable.
 const PORT = process.env.PORT || 3001; // Either the default PORT or port 3001.
 
 const path = require("path");
-const db = require("./db/db.json")
+const fs = require("fs");
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -19,10 +19,10 @@ app.get("/api/notes", (req, res) => {
 });
 
 app.post("/api/notes", (req, res) => {
-    console.info(`POST request received for notes`);
-    const newNote = req.body;
-    console.log("The new note is: ")
-    console.log(newNote);
+    const db = require("./db/db.json");
+    db.push(req.body);
+    fs.writeFileSync("./db/db.json", JSON.stringify(db));
+
     res.sendFile(path.join(__dirname, "./db/db.json"));
 });
 
