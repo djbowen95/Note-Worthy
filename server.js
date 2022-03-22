@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 3001; // Either the default PORT or port 3001.
 
 const path = require("path");
 const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -18,31 +19,19 @@ app.get("/api/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "./db/db.json"));
 });
 
-app.post("/api/notes", (req, res) => {
-    const db = require("./db/db.json");
-    db.push(req.body);
-    fs.writeFileSync("./db/db.json", JSON.stringify(db));
-
-    res.sendFile(path.join(__dirname, "./db/db.json"));
-});
-
-
 app.get("*", (req, res) => { // Takes in any request other than '/notes'.
     res.sendFile(path.join(__dirname, "public/index.html")); // Returns 'index.html'.
 });
 
-/*
-router.post('/notes', (req, res) => {
-    req.body.id = notes.length.toString();
-    let note = createNewNote(req.body, notes);
-    res.json(note);
-})
-*/
+app.post("/api/notes", (req, res) => {
+    const db = require("./db/db.json");
+    const newNote = req.body;
+    newNote.id = uuidv4();
+    db.push(newNote);
+    fs.writeFileSync("./db/db.json", JSON.stringify(db));
 
-
-// 'POST /api/notes' should recieve a new note to save to the request body, add it to db.json, and then return the new note to the client.
-
-// It should recieve a unique ID.
+    res.sendFile(path.join(__dirname, "./db/db.json"));
+});
 
 // Delete /api/notes/:id' - final step if time.
 
