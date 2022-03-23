@@ -24,7 +24,8 @@ app.get("*", (req, res) => { // Takes in any request other than '/notes'.
 });
 
 app.post("/api/notes", (req, res) => {
-    const db = require("./db/db.json"); // Want to change this to read file.
+    const db = fs.readFileSync('/db/db.json', 'utf8');
+    console.log(db);
     const newNote = req.body;
     newNote.id = uuidv4();
     const updatedDB = db.push(newNote);
@@ -35,7 +36,8 @@ app.post("/api/notes", (req, res) => {
 
 app.delete("/api/notes/:id", (req, res) => {
     const deleteID = req.params.id;
-    const db = require("./db/db.json"); // Want to change this to 'read file'
+    const db = fs.readFileSync('/db/db.json', 'utf8');
+    console.log(db);
     const updatedDB = db.filter((note) => note.id !== deleteID);
     fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
     res.send(`DELETE Request Called for ${deleteID}`);
