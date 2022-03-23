@@ -24,23 +24,34 @@ app.get("*", (req, res) => { // Takes in any request other than '/notes'.
 });
 
 app.post("/api/notes", (req, res) => {
-    const db = fs.readFileSync('/db/db.json', 'utf8');
-    console.log(db);
-    const newNote = req.body;
-    newNote.id = uuidv4();
-    const updatedDB = db.push(newNote);
-    fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
-
-    res.send(`POST request for note with id ${newNote.id} recieved.`);
+    fs.readFile('./db/db.json', (err, data) => {
+        if (err) {
+            console.log(err);
+            res.send("Error with POST request.");
+        } else {
+            const database = JSON.parse(data);
+            const newNote = req.body;
+            newNote.id = uuidv4();
+            database.push(newNote);
+            fs.writeFileSync("./db/db.json", JSON.stringify(database));
+            res.send(`POST request for note with id ${newNote.id} recieved. \n Successful.`);
+        }
+    });
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-    const deleteID = req.params.id;
-    const db = fs.readFileSync('/db/db.json', 'utf8');
-    console.log(db);
-    const updatedDB = db.filter((note) => note.id !== deleteID);
-    fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
-    res.send(`DELETE Request Called for ${deleteID}`);
-  })
+    fs.readFile('./db/db.json', (err, data) => {
+        if (err) {
+            console.log(err);
+            res.send("Error with DELETE request.");
+        } else {
+            const database = JSON.parse(data);
+            const deleteID = req.params.id;
+            const updatedDB = database.filter((note) => note.id !== deleteID);
+            fs.writeFileSync("./db/db.json", JSON.stringify(updatedDB));
+            res.send(`DELETE Request Called for ${deleteID}`);
+        }
+    })
+});
 
 app.listen(PORT, () => console.log(`App now listening on PORT ${PORT}`));
