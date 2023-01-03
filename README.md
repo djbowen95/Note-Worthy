@@ -1,3 +1,4 @@
+<h1 align="center">📝Duly Noted!📝</h1>
 
 # Note Taker
 <img src="https://img.shields.io/badge/license-MIT-green.svg">
